@@ -1,0 +1,12 @@
+[
+  {
+    "name": "mig001 mock",
+    "path": "/issuing/pin/counter",
+    "responseBody": "{\"pan\":123,  \"dad\": 123}"
+  },
+  {
+    "name": "mig002 mock",
+    "path": "/issuing/chto/to/eche",
+    "responseBody": "{\"pan\":321,  \"dad\": \"ddf\"}"
+  }
+]
