@@ -34,7 +34,7 @@ public class MockSpringApplication {
 @RequestMapping("/")
 class MockController {
 
-    private final Map<String, String> endpoints;
+    private final Map<String, Config> endpoints;
 
     public MockController() throws IOException {
         String configPath = "src/main/resources/config.json";
@@ -42,12 +42,12 @@ class MockController {
         endpoints = parseConfig(configContent);
     }
 
-    private Map<String, String> parseConfig(String configContent) throws IOException {
+    private Map<String, Config> parseConfig(String configContent) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         List<Config> configs = objectMapper.readValue(configContent, new TypeReference<List<Config>>() {});
-        Map<String, String> endpoints = new HashMap<>();
+        Map<String, Config> endpoints = new HashMap<>();
         for (Config config : configs) {
-            endpoints.put(config.getPath(), config.getResponseBody());
+            endpoints.put(config.getPath(), config);
         }
         return endpoints;
     }
@@ -55,15 +55,27 @@ class MockController {
     @PostMapping(value = "/**", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> handleRequest(@RequestBody String requestBody) {
         String path = (String) RequestContextHolder.getRequestAttributes().getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE, RequestAttributes.SCOPE_REQUEST);
-        String responseBody = endpoints.get(path);
+        Config config = endpoints.get(path);
+        String responseBody = config.getResponseBody();
+        long delay = config.getDelay();
+
+        // Обработка самой задержки из конф
+        try {
+            Thread.sleep(delay);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
         return ResponseEntity.ok(responseBody);
     }
 }
+
 
 class Config {
     private String name;
     private String path;
     private String responseBody;
+    private  long delay;
 
     // Геттеры
     public String getName() {
@@ -77,6 +89,7 @@ class Config {
     public String getResponseBody() {
         return responseBody;
     }
+    public long getDelay() {return delay;}
 
     // Сеттеры
     public void setName(String name) {
@@ -90,6 +103,7 @@ class Config {
     public void setResponseBody(String responseBody) {
         this.responseBody = responseBody;
     }
+    public void setDelay(long delay) {this.delay = delay;}
 }
 
 

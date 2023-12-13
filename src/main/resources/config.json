@@ -2,11 +2,13 @@
   {
     "name": "mig001 mock",
     "path": "/issuing/pin/counter",
-    "responseBody": "{\"pan\":123,  \"dad\": 123}"
+    "responseBody": "{\"pan\":123,  \"dad\": 123}",
+    "delay": 1000
   },
   {
     "name": "mig002 mock",
     "path": "/issuing/chto/to/eche",
-    "responseBody": "{\"pan\":321,  \"dad\": \"ddf\"}"
+    "responseBody": "{\"pan\":321,  \"dad\": \"ddf\"}",
+    "delay": 2000
   }
 ]
